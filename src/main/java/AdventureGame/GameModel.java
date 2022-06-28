@@ -1,9 +1,11 @@
 package AdventureGame;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.Random;
+import java.util.Scanner;
 
 public class GameModel {
 
@@ -13,19 +15,41 @@ public class GameModel {
     Consequens[] consequences;
     String[] questions;
     Consequens chosenConsequence;
-    public void start() {
+    int[] probabilities;
+    public void start(){
         this.player = new Player("Andreas");
 
-        generateQuestions();
+        generateQuestions("graph.txt");
         generateConsequences();
+        setProbabilities(25,25,45,5);
     }
 
-    private void generateQuestions() {
+    void setProbabilities(int inc, int dec, int age, int kill) {
+        probabilities = new int[]{inc, dec, age, kill};
+    }
+
+    void generateQuestions(String url){
         ArrayList<String> list = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++){
-            list.add("Question " + i);
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource(url).getFile());
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()){
+                list.add(scanner.nextLine());
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            for (int i = 0; i < 10; i++){
+                list.add("Backup " + i);
+            }
         }
+
+
+
+
         questions = list.toArray(new String[0]);
     }
 
@@ -95,23 +119,19 @@ public class GameModel {
         Consequens a1 = getNextConsequence();
         Consequens a2 = getNextConsequence();
 
-
         currentQuestion = new Question(q,a1,a2);
         return currentQuestion;
     }
 
     public Consequens getNextConsequence(){
-        int[] p = {25,25,45,5}; //inc, dec, age, kill
         int r = rand.nextInt(100);
-        System.out.println(r);
 
         int i = 0;
-        r-= p[i];
+        r-= probabilities[i];
         while (r >= 0){
             i++;
-            r-= p[i];
+            r-= probabilities[i];
         }
-        System.out.println(i);
         return consequences[i];
     }
 
@@ -121,5 +141,9 @@ public class GameModel {
 
     public String getResultPrompt() {
         return chosenConsequence.getMessage();
+    }
+
+    public boolean playerHasAged() {
+        return this.player.getAge() % 5 == 0;
     }
 }

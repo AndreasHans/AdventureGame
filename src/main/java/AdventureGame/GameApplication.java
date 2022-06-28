@@ -1,12 +1,14 @@
 package AdventureGame;
 
+import java.io.FileNotFoundException;
+
 public class GameApplication {
 
     Player player;
     GameController controller;
 
 
-    public void start(){
+    public void start() {
         this.player = new Player("Andreas");
         this.controller = new GameController();
         controller.start();

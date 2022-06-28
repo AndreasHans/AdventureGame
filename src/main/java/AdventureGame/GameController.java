@@ -1,7 +1,5 @@
 package AdventureGame;
 
-
-
 public class GameController {
     GameModel model;
     GameView view;
@@ -23,8 +21,6 @@ public class GameController {
         Question q = model.getNextQuestion();
         view.showQuestion(q);
         String answer = view.getAnswer();
-
-
 
         if  (answer.equals("yes")){
             model.handleYes(q);

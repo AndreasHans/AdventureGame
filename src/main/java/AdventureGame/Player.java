@@ -2,13 +2,15 @@ package AdventureGame;
 
 public class Player {
 
-    private int age,health;
+    private int age,health,strength;
     private String name;
 
     public Player(String name){
-        this.age = 0;
+        this.age = 1;
         this.health = 50;
         this.name = name;
+        this.strength = 0;
+
     }
 
     public String toString(){
@@ -38,5 +40,8 @@ public class Player {
 
     public int getHealth() {
         return this.health;
+    }
+    public int getAge() {
+        return this.age;
     }
 }
