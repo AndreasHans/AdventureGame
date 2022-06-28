@@ -15,31 +15,41 @@ public class GameController {
         model.start();
         view.start();
         cycle();
-        model.end();
-        view.end();
     }
 
     private void cycle() {
 
-        String move = view.getNextMove();
 
-        if (move.equals("end")){
-            return;
+        Question q = model.getNextQuestion();
+        view.showQuestion(q);
+        String answer = view.getAnswer();
+
+
+
+        if  (answer.equals("yes")){
+            model.handleYes(q);
         }
 
-        if  (move.equals("yes")){
-            model.increasePlayerAge();
-        }
-
-        if  (move.equals("no")){
-            model.increasePlayerHealth();
+        if  (answer.equals("no")){
+            model.handleNo(q);
         }
 
         String status = model.getStatus();
         System.out.println(status);
 
+        if (model.playerIsDead() || answer.equals("end")){
+            end();
+            return;
+        }
+
         cycle();
     }
+
+    public void end(){
+        model.end();
+        view.end();
+    }
+
 
 
 }

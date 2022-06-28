@@ -11,7 +11,6 @@ public class Player {
         this.name = name;
     }
 
-
     public String toString(){
         return this.name + " age:" + this.age + " health:" + this.health;
     }
@@ -25,7 +24,19 @@ public class Player {
         this.age++;
     }
 
+    public void decreaseHealth(){
+        this.health--;
+    }
+
+    public void killPlayer(){
+        this.health = 0;
+    }
+
     public void increaseHealth() {
         this.health++;
+    }
+
+    public int getHealth() {
+        return this.health;
     }
 }
