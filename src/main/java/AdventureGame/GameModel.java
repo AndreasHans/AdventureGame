@@ -11,11 +11,22 @@ public class GameModel {
     Question currentQuestion;
     Random rand = new Random();
     Consequens[] consequences;
+    String[] questions;
     Consequens chosenConsequence;
     public void start() {
         this.player = new Player("Andreas");
 
+        generateQuestions();
         generateConsequences();
+    }
+
+    private void generateQuestions() {
+        ArrayList<String> list = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++){
+            list.add("Question " + i);
+        }
+        questions = list.toArray(new String[0]);
     }
 
     private void generateConsequences() {
@@ -44,9 +55,9 @@ public class GameModel {
         String messageIncreaseAge = "You survived another year!";
         String messageKill = "You died!";
 
-        Consequens c1 = new Consequens(decreaseHP,messageDecreaseHP);
-        Consequens c2 = new Consequens(increaseAge,messageIncreaseAge);
-        Consequens c3 = new Consequens(increaseHP,messageIncreaseHP);
+        Consequens c1 = new Consequens(increaseHP,messageIncreaseHP);
+        Consequens c2 = new Consequens(decreaseHP,messageDecreaseHP);
+        Consequens c3 = new Consequens(increaseAge,messageIncreaseAge);
         Consequens c4 = new Consequens(kill,messageKill);
 
         ArrayList<Consequens> list = new ArrayList<>();
@@ -57,7 +68,6 @@ public class GameModel {
 
         this.consequences =  list.toArray(new Consequens[0]);
     }
-
 
     public void end() {
 
@@ -79,22 +89,37 @@ public class GameModel {
     }
     public Question getNextQuestion() {
 
-        String q = "test question (yes/no/end)";
+        int r = rand.nextInt(questions.length);
+        String q = questions[r] + " (yes/no/end)";
 
-        int r1 = rand.nextInt(consequences.length);
-        int r2 = rand.nextInt(consequences.length);
-        Consequens a1 = consequences[r1];
-        Consequens a2 = consequences[r2];
+        Consequens a1 = getNextConsequence();
+        Consequens a2 = getNextConsequence();
+
 
         currentQuestion = new Question(q,a1,a2);
         return currentQuestion;
+    }
+
+    public Consequens getNextConsequence(){
+        int[] p = {25,25,45,5}; //inc, dec, age, kill
+        int r = rand.nextInt(100);
+        System.out.println(r);
+
+        int i = 0;
+        r-= p[i];
+        while (r >= 0){
+            i++;
+            r-= p[i];
+        }
+        System.out.println(i);
+        return consequences[i];
     }
 
     public boolean playerIsDead() {
         return this.player.getHealth() == 0;
     }
 
-    public String getResultPromt() {
+    public String getResultPrompt() {
         return chosenConsequence.getMessage();
     }
 }

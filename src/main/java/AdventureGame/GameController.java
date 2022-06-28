@@ -34,7 +34,7 @@ public class GameController {
             model.handleNo(q);
         }
 
-        String result = model.getResultPromt();
+        String result = model.getResultPrompt();
         String status = model.getStatus();
 
         view.showResults(result,status);
