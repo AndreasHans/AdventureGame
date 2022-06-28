@@ -25,7 +25,6 @@ public class GameModel {
     public void start(){
         generatePlayer();
         generateGraph();
-        //generateNodeRelations();
         generateNodeContents();
         generateModifications();
         this.currentNode = this.graph.getNode(nodeStart);
@@ -116,16 +115,6 @@ public class GameModel {
 
         this.positive = pos.toArray(new Consequence[0]);
         this.negative = neg.toArray(new Consequence[0]);
-    }
-
-    public void generateNodeRelations(){
-        //this.graph.addEdgeSingle(0,1);
-        //this.graph.addEdgeSingle(0,2);
-        //this.graph.addEdge(1,2);
-        //this.graph.addEdgeSingle(1,0);
-        //this.graph.addEdge(2,1);
-        //this.graph.addEdgeSingle(2,0);
-        //this.graph.printGraph();
     }
 
     public void generateNodeContents(){
