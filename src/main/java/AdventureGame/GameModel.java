@@ -1,59 +1,38 @@
 package AdventureGame;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.Random;
-import java.util.Scanner;
 
 public class GameModel {
 
+    Graph graph;
     Player player;
-    Question currentQuestion;
+    Node currentNode;
     Random rand = new Random();
-    Consequens[] consequences;
-    String[] questions;
-    Consequens chosenConsequence;
-    int[] probabilities;
+    Consequence[] positive;
+    Consequence[] negative;
+    Consequence currentConsequence;
+
+    public static int nodeCount = 3;
+    public static int nodeStart = 0;
+
+    public static int percentOfGoodChange = 95;
+
+
+
     public void start(){
         this.player = new Player("Andreas");
 
-        generateQuestions("graph.txt");
-        generateConsequences();
-        setProbabilities(25,25,45,5);
+        this.graph = new Graph(nodeCount);
+        generateNodeRelations();
+        generateNodeContents();
+        generateModifications();
+        this.currentNode = this.graph.getNode(nodeStart);
     }
 
-    void setProbabilities(int inc, int dec, int age, int kill) {
-        probabilities = new int[]{inc, dec, age, kill};
-    }
-
-    void generateQuestions(String url){
-        ArrayList<String> list = new ArrayList<>();
-
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource(url).getFile());
-            Scanner scanner = new Scanner(file);
-
-            while (scanner.hasNextLine()){
-                list.add(scanner.nextLine());
-            }
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            for (int i = 0; i < 10; i++){
-                list.add("Backup " + i);
-            }
-        }
-
-
-
-
-        questions = list.toArray(new String[0]);
-    }
-
-    private void generateConsequences() {
+    private void generateModifications() {
         Function<Player,Player> decreaseHP = (p) -> {
             p.decreaseHealth();
             return null;
@@ -74,76 +53,94 @@ public class GameModel {
             return null;
         };
 
-        String messageDecreaseHP = "You lost a HP!";
-        String messageIncreaseHP = "You gained a HP!";
-        String messageIncreaseAge = "You survived another year!";
-        String messageKill = "You died!";
+        String messageDecreaseHP = "you lost a HP!";
+        String messageIncreaseHP = "you gained a HP!";
+        String messageIncreaseAge = "you survived another year!";
+        String messageKill = "you died!";
 
-        Consequens c1 = new Consequens(increaseHP,messageIncreaseHP);
-        Consequens c2 = new Consequens(decreaseHP,messageDecreaseHP);
-        Consequens c3 = new Consequens(increaseAge,messageIncreaseAge);
-        Consequens c4 = new Consequens(kill,messageKill);
+        Consequence c1 = new Consequence(increaseHP,messageIncreaseHP);
+        Consequence c2 = new Consequence(decreaseHP,messageDecreaseHP);
+        Consequence c3 = new Consequence(increaseAge,messageIncreaseAge);
+        Consequence c4 = new Consequence(kill,messageKill);
 
-        ArrayList<Consequens> list = new ArrayList<>();
-        list.add(c1);
-        list.add(c2);
-        list.add(c3);
-        list.add(c4);
+        ArrayList<Consequence> pos = new ArrayList<>();
+        ArrayList<Consequence> neg = new ArrayList<>();
 
-        this.consequences =  list.toArray(new Consequens[0]);
+        pos.add(c1);
+        neg.add(c2);
+        pos.add(c3);
+        neg.add(c4);
+
+        this.positive = pos.toArray(new Consequence[0]);
+        this.negative = neg.toArray(new Consequence[0]);
     }
 
-    public void end() {
-
+    public void generateNodeRelations(){
+        this.graph.addEdge(0,1);
+        this.graph.addEdge(0,2);
+        //this.graph.addEdge(1,2);
+        this.graph.addEdge(1,0);
+        //this.graph.addEdge(2,1);
+        this.graph.addEdge(2,0);
+        //this.graph.printGraph();
     }
+
+    public void generateNodeContents(){
+        for (int i = 0; i < nodeCount; i++){
+            Node n = new Node(i,"title " + i,"message " + i);
+            this.graph.setNode(n,i);
+        }
+    }
+
+    public void selectNode(int i) {
+        this.currentNode = this.graph.getNode(i);
+    }
+
+    public Node getCurrentNode(){
+        return this.currentNode;
+    }
+
+    public int[] getPossibilities() {
+        int index = this.currentNode.getIndex();
+        return this.graph.getNeighboursOf(index);
+    }
+
+    public void doNodeEvent() {
+        int val = rand.nextInt(100);
+        if (val < percentOfGoodChange) doPositiveChange();
+        if (val > percentOfGoodChange) doNegativeChange();
+    }
+
+    private void doNegativeChange() {
+        int r = rand.nextInt(negative.length);
+        this.currentConsequence = negative[r];
+        this.currentConsequence.getFunction().apply(this.player);
+    }
+
+    private void doPositiveChange() {
+        int r = rand.nextInt(positive.length);
+        this.currentConsequence = positive[r];
+        this.currentConsequence.getFunction().apply(this.player);
+    }
+
     public String getStatus() {
         return this.player.toString();
     }
 
-    public void handleYes(Question q) {
-        chosenConsequence = q.getYesAnswer();
-        Function answer = chosenConsequence.getFunction();
-        answer.apply(this.player);
+    public String getResultMessage() {
+
+        String message =
+                "You went to node " + currentNode.getIndex() + "\n" +
+                "and " + this.currentConsequence.getMessage();
+        return message;
     }
 
-    public void handleNo(Question q) {
-        chosenConsequence = q.getNoAnswer();
-        Function answer = chosenConsequence.getFunction();
-        answer.apply(this.player);
-    }
-    public Question getNextQuestion() {
+    public void end() {
 
-        int r = rand.nextInt(questions.length);
-        String q = questions[r] + " (yes/no/end)";
-
-        Consequens a1 = getNextConsequence();
-        Consequens a2 = getNextConsequence();
-
-        currentQuestion = new Question(q,a1,a2);
-        return currentQuestion;
-    }
-
-    public Consequens getNextConsequence(){
-        int r = rand.nextInt(100);
-
-        int i = 0;
-        r-= probabilities[i];
-        while (r >= 0){
-            i++;
-            r-= probabilities[i];
-        }
-        return consequences[i];
     }
 
     public boolean playerIsDead() {
         return this.player.getHealth() == 0;
     }
 
-    public String getResultPrompt() {
-        return chosenConsequence.getMessage();
-    }
-
-    public boolean playerHasAged() {
-        return this.player.getAge() % 5 == 0;
-    }
 }

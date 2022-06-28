@@ -17,37 +17,48 @@ public class GameController {
 
     private void cycle() {
 
+        //current node
+        Node currentNode = model.getCurrentNode();
 
-        Question q = model.getNextQuestion();
-        view.showQuestion(q);
-        String answer = view.getAnswer();
+        //show node message
+        view.showNodeMessage(currentNode);
 
-        if  (answer.equals("yes")){
-            model.handleYes(q);
-        }
+        //show node possibilities
+        int[] pos = model.getPossibilities();
+        view.showPossibilities(pos);
 
-        if  (answer.equals("no")){
-            model.handleNo(q);
-        }
+        //wait for valid user input
+        int inp = view.getValidUserInput(pos);
 
-        String result = model.getResultPrompt();
-        String status = model.getStatus();
-
-        view.showResults(result,status);
-
-        if (model.playerIsDead() || answer.equals("end")){
+        //handle user input
+        if (inp == -1){
             end();
             return;
         }
 
+        //go the user selected node
+        model.selectNode(inp);
+
+        //node event happens
+        model.doNodeEvent();
+
+        //show what happened
+        String result = model.getResultMessage();
+        String status = model.getStatus();
+        view.showResults(result,status);
+
+        //check game over
+        if (model.playerIsDead()){
+            end();
+            return;
+        }
+
+        //repeat
         cycle();
     }
-
     public void end(){
         model.end();
         view.end();
     }
-
-
 
 }

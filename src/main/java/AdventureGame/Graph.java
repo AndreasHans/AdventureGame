@@ -3,16 +3,35 @@ package AdventureGame;
 import java.util.ArrayList;
 
 public class Graph {
-    private int vertices;
+
+
+    private Node[] nodes;
     private ArrayList<Integer>[] adj;
 
-    public Graph(int a){
-        this.vertices = a;
-        this.adj = new ArrayList[a];
+    public Graph(int amount){
+        this.nodes = new Node[amount];
+        this.adj = new ArrayList[amount];
+
+        for (int i = 0; i < amount; i++) {
+            this.nodes[i] = new Node(-1,"-1", "-1");
+            this.adj[i] = new ArrayList<>();
+        }
     }
 
     public void addEdge(int u, int v){
         this.adj[u].add(v);
+    }
+
+    public void setNode(Node node, int index){
+        this.nodes[index] = node;
+    }
+
+    public Node getNode(int index){
+        return this.nodes[index];
+    }
+
+    public int[] getNeighboursOf(int index){
+        return this.adj[index].stream().mapToInt(i -> i).toArray();
     }
 
     public void printGraph(){
