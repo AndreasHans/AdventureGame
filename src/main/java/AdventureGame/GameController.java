@@ -32,7 +32,7 @@ public class GameController {
 
         //handle user input
         if (inp == -1){
-            end();
+            view.showLost();
             return;
         }
 
@@ -48,17 +48,22 @@ public class GameController {
         view.showResults(result,status);
 
         //check game over
-        if (model.playerIsDead()){
-            end();
+        if (model.isGameOver()){
+            GameOver();
             return;
         }
 
         //repeat
         cycle();
     }
-    public void end(){
-        model.end();
-        view.end();
+
+
+    public void GameOver(){
+        if (model.playerWon()){
+            view.showWin();
+        } else {
+            view.showLost();
+        }
     }
 
 }

@@ -17,7 +17,7 @@ public class GameModel {
     public static int nodeStart = 0;
 
     public static int percentOfGoodChange = 95;
-
+    private int winningIndex = 2;
 
 
     public void start(){
@@ -133,12 +133,15 @@ public class GameModel {
         return message;
     }
 
-    public void end() {
-
-    }
-
-    public boolean playerIsDead() {
+    public boolean playerLost() {
         return this.player.getHealth() == 0;
     }
 
+    public boolean playerWon(){
+        return this.currentNode.getIndex() == winningIndex;
+    }
+
+    public boolean isGameOver() {
+        return playerLost() || playerWon();
+    }
 }
