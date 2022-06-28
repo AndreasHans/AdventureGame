@@ -25,4 +25,10 @@ public class GameView {
     public void showQuestion(Question q) {
         System.out.println(q.getQuestion());
     }
+
+    public void showResults(String result, String status) {
+        System.out.println(result);
+        System.out.println(status);
+        System.out.println();
+    }
 }

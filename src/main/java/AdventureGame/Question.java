@@ -6,10 +6,10 @@ import java.util.function.Function;
 public class Question {
 
     private String question;
-    private Function yesAnswer;
-    private Function noAnswer;
+    private Consequens yesAnswer;
+    private Consequens noAnswer;
 
-    public Question(String q, Function a1,Function a2){
+    public Question(String q, Consequens a1,Consequens a2){
         this.question = q;
         this.yesAnswer = a1;
         this.noAnswer = a2;
@@ -19,11 +19,11 @@ public class Question {
         return this.question;
     }
 
-    public Function getYesAnswer(){
+    public Consequens getYesAnswer(){
         return this.yesAnswer;
     }
 
-    public Function getNoAnswer(){
+    public Consequens getNoAnswer(){
         return this.noAnswer;
     }
 

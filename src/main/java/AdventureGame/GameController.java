@@ -34,8 +34,10 @@ public class GameController {
             model.handleNo(q);
         }
 
+        String result = model.getResultPromt();
         String status = model.getStatus();
-        System.out.println(status);
+
+        view.showResults(result,status);
 
         if (model.playerIsDead() || answer.equals("end")){
             end();
