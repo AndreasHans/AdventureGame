@@ -1,6 +1,5 @@
 package AdventureGame;
 
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class GameView {

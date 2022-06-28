@@ -3,8 +3,6 @@ package AdventureGame;
 import java.util.ArrayList;
 
 public class Graph {
-
-
     private Node[] nodes;
     private ArrayList<Integer>[] adj;
 

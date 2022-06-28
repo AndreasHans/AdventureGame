@@ -1,6 +1,5 @@
 package AdventureGame;
 
-
 import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.Random;
@@ -11,8 +10,7 @@ public class GameModel {
     Player player;
     Node currentNode;
     Random rand = new Random();
-    Consequence[] positive;
-    Consequence[] negative;
+    Consequence[] positive,negative;
     Consequence currentConsequence;
 
     public static int nodeCount = 3;
