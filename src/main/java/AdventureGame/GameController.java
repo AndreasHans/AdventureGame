@@ -57,7 +57,6 @@ public class GameController {
         cycle();
     }
 
-
     public void GameOver(){
         if (model.playerWon()){
             view.showWin();

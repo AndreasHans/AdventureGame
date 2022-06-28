@@ -1,6 +1,8 @@
 package AdventureGame;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.function.Function;
 import java.util.Random;
 
@@ -13,21 +15,64 @@ public class GameModel {
     Consequence[] positive,negative;
     Consequence currentConsequence;
 
-    public static int nodeCount = 3;
-    public static int nodeStart = 0;
+    public static int nodeCount;
+    public static int nodeStart;
 
     public static int percentOfGoodChange = 95;
     private int winningIndex = 2;
 
 
     public void start(){
-        this.player = new Player("Andreas");
-
-        this.graph = new Graph(nodeCount);
-        generateNodeRelations();
+        generatePlayer();
+        generateGraph();
+        //generateNodeRelations();
         generateNodeContents();
         generateModifications();
         this.currentNode = this.graph.getNode(nodeStart);
+    }
+
+    private void generatePlayer() {
+        this.player = new Player("Andreas");
+    }
+
+    private void generateGraph() {
+        ArrayList<Character> list = getCharList();
+        nodeCount = list.size();
+        this.graph = new Graph(nodeCount);
+        int i = 0;
+        for (char c: list){
+            if (c == 'P') nodeStart = i;
+            if (c == 'G') winningIndex = i;
+            generateNodeRelation(i);
+            i++;
+        }
+    }
+
+    private void generateNodeRelation(int i) {
+        int sq = (int) Math.sqrt(nodeCount);
+        if (i >= sq ) this.graph.addEdgeSingle(i,i-sq); //up
+        if (i < sq*(sq-1)) this.graph.addEdgeSingle(i,i+sq); //down
+        if ((i+1) % sq != 0 ) this.graph.addEdgeSingle(i,i+1); //right
+        if (i % sq != 0 ) this.graph.addEdgeSingle(i,i-1); //left
+    }
+
+    private ArrayList<Character> getCharList() {
+        ArrayList<Character> list = new ArrayList<>();
+        try {
+            File file = new File("C:\\Users\\andre\\repos\\AdventureGame\\src\\main\\resources\\game.txt");
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()){
+                String line = scanner.next();
+                char[] chars = line.toCharArray();
+                for (char c: chars){
+                    list.add(c);
+                }
+            }
+        } catch (Exception e){
+            System.out.println("Error while generating the graph");
+        }
+        return list;
     }
 
     private void generateModifications() {
@@ -74,12 +119,12 @@ public class GameModel {
     }
 
     public void generateNodeRelations(){
-        this.graph.addEdge(0,1);
-        this.graph.addEdge(0,2);
+        //this.graph.addEdgeSingle(0,1);
+        //this.graph.addEdgeSingle(0,2);
         //this.graph.addEdge(1,2);
-        this.graph.addEdge(1,0);
+        //this.graph.addEdgeSingle(1,0);
         //this.graph.addEdge(2,1);
-        this.graph.addEdge(2,0);
+        //this.graph.addEdgeSingle(2,0);
         //this.graph.printGraph();
     }
 

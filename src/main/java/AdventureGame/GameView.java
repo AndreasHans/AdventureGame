@@ -20,6 +20,9 @@ public class GameView {
     }
 
     public void showPossibilities(int[] pos) {
+
+        System.out.println("You have the following options:");
+
         for (int e: pos){
             System.out.println("go to " + e + " (type " + e + ")" );
         }

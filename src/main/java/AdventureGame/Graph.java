@@ -16,10 +16,9 @@ public class Graph {
         }
     }
 
-    public void addEdge(int u, int v){
+    public void addEdgeSingle(int u, int v){
         this.adj[u].add(v);
     }
-
     public void setNode(Node node, int index){
         this.nodes[index] = node;
     }
