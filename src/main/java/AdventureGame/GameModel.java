@@ -1,6 +1,7 @@
 package AdventureGame;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -17,17 +18,70 @@ public class GameModel {
 
     public static int nodeCount;
     public static int nodeStart;
+    public static int winningIndex;
 
     public static int percentOfGoodChange = 95;
-    private int winningIndex = 2;
 
+    public static int min = 5;
+    public static int max = 10;
 
     public void start(){
+        generateRandomGraph(rand.nextInt(max-min)+min);
         generatePlayer();
         generateGraph();
         generateNodeContents();
         generateModifications();
         this.currentNode = this.graph.getNode(nodeStart);
+    }
+
+    private void generateRandomGraph(int size){
+
+        char[] liste = new char[size*size];
+
+        for (int i = 0; i < size*size; i++){
+            liste[i] = getaChar();
+        }
+
+        int p = rand.nextInt(size*size);
+        int g = rand.nextInt(size*size);
+        while(g == p){
+            g = rand.nextInt(size*size);
+        }
+        liste[p] = 'P';
+        liste[g] = 'G';
+
+        String[] list = new String[size];
+
+        for (int i = 0; i < list.length; i++){
+            list[i] = "";
+        }
+
+        for (int i = 0; i < liste.length; i++){
+            list[i % size] += liste[i];
+        }
+
+        writeListToFile(list);
+    }
+
+    private char getaChar() {
+        int r = rand.nextInt(100);
+
+        if (r > 25) return '#';
+        return '@';
+    }
+
+
+    private void writeListToFile(String[] list) {
+        try{
+            PrintWriter writer = new PrintWriter("C:\\Users\\andre\\repos\\AdventureGame\\src\\main\\resources\\game.txt", "UTF-8");
+
+            for (String line: list){
+                writer.println(line);
+            }
+            writer.close();
+        } catch (Exception e){
+            System.out.println("Error while generating a random graph");
+        }
     }
 
     private void generatePlayer() {
@@ -69,7 +123,6 @@ public class GameModel {
                 }
             }
         } catch (Exception e){
-            System.out.println("Error while generating the graph");
         }
         return list;
     }
