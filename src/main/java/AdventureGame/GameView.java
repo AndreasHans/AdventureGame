@@ -1,5 +1,8 @@
 package AdventureGame;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class GameView {
@@ -10,48 +13,41 @@ public class GameView {
         System.out.println("The game is starting!");
     }
 
-    public void end() {
-        System.out.println("Game Over!");
+    public void showHitMessage(Node node){
+        System.out.println("You are at " + node.getTitle());
+        System.out.println("This is where " + node.getHitMessage());
     }
 
-    public void showNodeMessage(Node node){
-        System.out.println("currently at node " + node.getTitle());
-        System.out.println("The message is " + node.getMessage());
-    }
+    public int getValidUserInput(Node[] pos) {
+        String inp = "";
+        int index;
+        ArrayList<String> validOptions = new ArrayList<>();
 
-    public void showPossibilities(int[] pos) {
+        Map<String,Integer> inpToIndex = new HashMap<>();
 
-        System.out.println("You have the following options:");
-
-        for (int e: pos){
-            System.out.println("go to " + e + " (type " + e + ")" );
+        for (Node n: pos){
+            validOptions.add(n.getTypeThis());
+            inpToIndex.put(n.getTypeThis(),n.getIndex());
         }
-    }
-
-    public int getValidUserInput(int[] pos) {
-        int val = -2;
 
         Boolean isValid = false;
         while (!isValid) {
-
-            if (val == -1) break;
-
-            if (!input.hasNextInt()){
-                input.nextLine();
-            } else {
-                val = input.nextInt();
+            inp = input.nextLine();
+            isValid = isNeighbour(inp,validOptions);
+            if (inp.equals("-1")){
+                return -1;
             }
-
-            isValid = isNeighbour(pos,val);
         }
 
-        return val;
+        index = inpToIndex.get(inp);
+        return index;
     }
 
-    private boolean isNeighbour(int[] pos, int val) {
-        for (int e: pos){
-            if (e == val) return true;
+    private boolean isNeighbour(String inp, ArrayList<String> list) {
+        for (String e: list){
+            if (e.equals(inp)) return true;
         }
+        System.out.println("This is not a valid input!");
         return false;
     }
 
@@ -70,5 +66,14 @@ public class GameView {
     public void showLost() {
         System.out.println("YOU LOST!");
         System.out.println("Game Over");
+    }
+
+    public void showPossibilities(Node[] possibilities) {
+        System.out.println("You have the following options:");
+
+        for (Node n: possibilities){
+            System.out.println("Go to " + n.getHint() + " by typing '" + n.getTypeThis() + "'");
+        }
+
     }
 }

@@ -2,35 +2,25 @@ package AdventureGame;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Function;
-import java.util.Random;
 
 public class GameModel {
-
     Graph graph;
     Player player;
     Node currentNode;
     Random rand = new Random();
-    Consequence[] positive,negative;
-    Consequence currentConsequence;
+    ArrayList<Function> events;
 
-    public static int nodeCount;
-    public static int nodeStart;
-    public static int winningIndex;
-
-    public static int percentOfGoodChange = 95;
-
-    public static int min = 5;
-    public static int max = 10;
+    public static int nodeCount,nodeStart,winningIndex;
+    public static int min = 5, max = 10;
 
     public void start(){
         generateRandomGraph(rand.nextInt(max-min)+min);
+        generateEvents();
         generatePlayer();
         generateGraph();
-        generateNodeContents();
-        generateModifications();
+
         this.currentNode = this.graph.getNode(nodeStart);
     }
 
@@ -70,7 +60,6 @@ public class GameModel {
         return '@';
     }
 
-
     private void writeListToFile(String[] list) {
         try{
             PrintWriter writer = new PrintWriter("C:\\Users\\andre\\repos\\AdventureGame\\src\\main\\resources\\game.txt", "UTF-8");
@@ -94,8 +83,7 @@ public class GameModel {
         this.graph = new Graph(nodeCount);
         int i = 0;
         for (char c: list){
-            if (c == 'P') nodeStart = i;
-            if (c == 'G') winningIndex = i;
+            generateNode(i,c);
             generateNodeRelation(i);
             i++;
         }
@@ -127,7 +115,11 @@ public class GameModel {
         return list;
     }
 
-    private void generateModifications() {
+
+    private void generateEvents(){
+
+        this.events = new ArrayList<>();
+
         Function<Player,Player> decreaseHP = (p) -> {
             p.decreaseHealth();
             return null;
@@ -147,34 +139,31 @@ public class GameModel {
             p.killPlayer();
             return null;
         };
-
-        String messageDecreaseHP = "you lost a HP!";
-        String messageIncreaseHP = "you gained a HP!";
-        String messageIncreaseAge = "you survived another year!";
-        String messageKill = "you died!";
-
-        Consequence c1 = new Consequence(increaseHP,messageIncreaseHP);
-        Consequence c2 = new Consequence(decreaseHP,messageDecreaseHP);
-        Consequence c3 = new Consequence(increaseAge,messageIncreaseAge);
-        Consequence c4 = new Consequence(kill,messageKill);
-
-        ArrayList<Consequence> pos = new ArrayList<>();
-        ArrayList<Consequence> neg = new ArrayList<>();
-
-        pos.add(c1);
-        neg.add(c2);
-        pos.add(c3);
-        neg.add(c4);
-
-        this.positive = pos.toArray(new Consequence[0]);
-        this.negative = neg.toArray(new Consequence[0]);
+        this.events.add(decreaseHP);
+        this.events.add(increaseAge);
+        this.events.add(increaseHP);
+        //this.events.add(kill);
     }
 
-    public void generateNodeContents(){
-        for (int i = 0; i < nodeCount; i++){
-            Node n = new Node(i,"title " + i,"message " + i);
-            this.graph.setNode(n,i);
-        }
+    private Function getRandomEvent(){
+        int r = rand.nextInt(this.events.size());
+        return this.events.get(r);
+    }
+
+    public void generateNode(int i, char c){
+
+        if (c == 'P') nodeStart = i;
+        if (c == 'G') winningIndex = i;
+        String title = "title " + i;
+        String message = "hit message " + i;
+        String eventMessage = "eventMessage " + i;
+        String hint = "hint " + i;
+        String result = "result " + i;
+        String typeThis = "type" +i;
+
+        Function event = getRandomEvent();
+        Node n = new Node(i,title,message,eventMessage,hint,result,typeThis,event);
+        this.graph.setNode(n,i);
     }
 
     public void selectNode(int i) {
@@ -185,38 +174,19 @@ public class GameModel {
         return this.currentNode;
     }
 
-    public int[] getPossibilities() {
-        int index = this.currentNode.getIndex();
-        return this.graph.getNeighboursOf(index);
-    }
-
     public void doNodeEvent() {
-        int val = rand.nextInt(100);
-        if (val < percentOfGoodChange) doPositiveChange();
-        if (val > percentOfGoodChange) doNegativeChange();
-    }
-
-    private void doNegativeChange() {
-        int r = rand.nextInt(negative.length);
-        this.currentConsequence = negative[r];
-        this.currentConsequence.getFunction().apply(this.player);
-    }
-
-    private void doPositiveChange() {
-        int r = rand.nextInt(positive.length);
-        this.currentConsequence = positive[r];
-        this.currentConsequence.getFunction().apply(this.player);
+        this.currentNode.getEvent().apply(this.player);
     }
 
     public String getStatus() {
         return this.player.toString();
     }
 
-    public String getResultMessage() {
-
+    public String getEventMessage() {
         String message =
-                "You went to node " + currentNode.getIndex() + "\n" +
-                "and " + this.currentConsequence.getMessage();
+                "You went to " + currentNode.getHint() + "\n" +
+                "and " + currentNode.getEventMessage() + ".\n" +
+                "You " + currentNode.getResultMessage();
         return message;
     }
 
@@ -230,5 +200,18 @@ public class GameModel {
 
     public boolean isGameOver() {
         return playerLost() || playerWon();
+    }
+
+    public Node[] getPossibilities() {
+        int index = this.currentNode.getIndex();
+        int[] indexes = this.graph.getNeighboursOf(index);
+
+        ArrayList<Node> list = new ArrayList<>();
+
+        for (int i: indexes){
+            Node n = this.graph.getNode(i);
+            list.add(n);
+        }
+        return list.toArray(new Node[0]);
     }
 }

@@ -1,5 +1,7 @@
 package AdventureGame;
 
+import java.util.Map;
+
 public class GameController {
     GameModel model;
     GameView view;
@@ -21,14 +23,14 @@ public class GameController {
         Node currentNode = model.getCurrentNode();
 
         //show node message
-        view.showNodeMessage(currentNode);
+        view.showHitMessage(currentNode);
 
         //show node possibilities
-        int[] pos = model.getPossibilities();
-        view.showPossibilities(pos);
+        Node[] possibilities = model.getPossibilities();
+        view.showPossibilities(possibilities);
 
         //wait for valid user input
-        int inp = view.getValidUserInput(pos);
+        int inp = view.getValidUserInput(possibilities);
 
         //handle user input
         if (inp == -1){
@@ -43,7 +45,7 @@ public class GameController {
         model.doNodeEvent();
 
         //show what happened
-        String result = model.getResultMessage();
+        String result = model.getEventMessage();
         String status = model.getStatus();
         view.showResults(result,status);
 

@@ -11,7 +11,7 @@ public class Graph {
         this.adj = new ArrayList[amount];
 
         for (int i = 0; i < amount; i++) {
-            this.nodes[i] = new Node(-1,"-1", "-1");
+            this.nodes[i] = new Node();
             this.adj[i] = new ArrayList<>();
         }
     }
