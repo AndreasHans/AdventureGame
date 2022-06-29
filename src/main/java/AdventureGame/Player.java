@@ -5,7 +5,7 @@ public class Player {
     private String name;
 
     public Player(String name){
-        this.age = 1;
+        this.age = 0;
         this.health = 50;
         this.name = name;
         this.strength = 0;

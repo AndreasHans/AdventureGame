@@ -15,7 +15,7 @@ public class GameView {
 
     public void showHitMessage(Node node){
         System.out.println("You are at " + node.getTitle());
-        System.out.println("This is where " + node.getHitMessage());
+        System.out.println(node.getHitMessage());
     }
 
     public int getValidUserInput(Node[] pos) {
@@ -56,7 +56,6 @@ public class GameView {
         System.out.println(status);
         System.out.println("------------------------");
     }
-
 
     public void showWin() {
         System.out.println("YOU WIN!");

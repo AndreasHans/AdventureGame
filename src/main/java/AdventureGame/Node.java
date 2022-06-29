@@ -13,15 +13,9 @@ import java.util.function.Function;
 //raiding a village
 
 public class Node {
-    private final String title;
-    private final String hitMessage;
-    private final String hint;
-    private final String eventMessage;
-
-    private final String resultMessage;
-
-    private final String typeThis;
-
+    private final String title,hitMessage;
+    private final String hint,typeThis;
+    private final String eventMessage,resultMessage;
     private final Function event;
     private final int index;
 
@@ -78,4 +72,5 @@ public class Node {
     public String getTypeThis() {
         return this.typeThis;
     }
+
 }

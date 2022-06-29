@@ -10,14 +10,14 @@ public class GameModel {
     Player player;
     Node currentNode;
     Random rand = new Random();
-    ArrayList<Function> events;
+    public static ArrayList<Function> events;
+    private static NodeTypes nodeTypes = new NodeTypes();
 
     public static int nodeCount,nodeStart,winningIndex;
     public static int min = 5, max = 10;
 
     public void start(){
         generateRandomGraph(rand.nextInt(max-min)+min);
-        generateEvents();
         generatePlayer();
         generateGraph();
 
@@ -115,54 +115,22 @@ public class GameModel {
         return list;
     }
 
-
-    private void generateEvents(){
-
-        this.events = new ArrayList<>();
-
-        Function<Player,Player> decreaseHP = (p) -> {
-            p.decreaseHealth();
-            return null;
-        };
-
-        Function<Player,Player> increaseHP = (p) -> {
-            p.increaseHealth();
-            return null;
-        };
-
-        Function<Player,Player> increaseAge = (p) -> {
-            p.increaseAge();
-            return null;
-        };
-
-        Function<Player,Player> kill = (p) -> {
-            p.killPlayer();
-            return null;
-        };
-        this.events.add(decreaseHP);
-        this.events.add(increaseAge);
-        this.events.add(increaseHP);
-        //this.events.add(kill);
-    }
-
-    private Function getRandomEvent(){
-        int r = rand.nextInt(this.events.size());
-        return this.events.get(r);
-    }
-
     public void generateNode(int i, char c){
 
-        if (c == 'P') nodeStart = i;
-        if (c == 'G') winningIndex = i;
-        String title = "title " + i;
-        String message = "hit message " + i;
-        String eventMessage = "eventMessage " + i;
-        String hint = "hint " + i;
-        String result = "result " + i;
-        String typeThis = "type" +i;
-
-        Function event = getRandomEvent();
-        Node n = new Node(i,title,message,eventMessage,hint,result,typeThis,event);
+        Node n;
+        switch (c){
+            case 'P':
+                nodeStart = i;
+                 n = nodeTypes.createStartNode(i);
+                break;
+            case 'G':
+                winningIndex = i;
+                 n = nodeTypes.createGoalNode(i);
+                break;
+            default:
+                n = nodeTypes.createEventNode(i);
+                break;
+        }
         this.graph.setNode(n,i);
     }
 
@@ -186,7 +154,7 @@ public class GameModel {
         String message =
                 "You went to " + currentNode.getHint() + "\n" +
                 "and " + currentNode.getEventMessage() + ".\n" +
-                "You " + currentNode.getResultMessage();
+                currentNode.getResultMessage();
         return message;
     }
 
@@ -214,4 +182,7 @@ public class GameModel {
         }
         return list.toArray(new Node[0]);
     }
+
+
+
 }

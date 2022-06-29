@@ -1,7 +1,5 @@
 package AdventureGame;
 
-import java.util.Map;
-
 public class GameController {
     GameModel model;
     GameView view;
