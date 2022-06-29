@@ -62,6 +62,7 @@ public class GameView {
         System.out.println("You made it to the end!");
         System.out.println("Game Over");
     }
+
     public void showLost() {
         System.out.println("YOU LOST!");
         System.out.println("Game Over");

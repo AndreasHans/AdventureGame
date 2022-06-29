@@ -53,4 +53,27 @@ public class NodeTypes {
         Function event = events.getRandomEvent();
         return new Node(i,title,message,eventMessage,hint,resultMessage,typeThis, event);
     }
+
+    public Node createTrapNode(int i) {
+        String title = "a trap field.";
+        String message = "Here you might die!";
+        String eventMessage = "you went to a death trap!";
+        String hint = "looks like a trap!";
+        String resultMessage = "You fell into a trap";
+        String typeThis = "trap"+i;
+        Function event = events.getBadEvent();
+        return new Node(i,title,message,eventMessage,hint,resultMessage,typeThis, event);
+    }
+
+    public Node createGoodNode(int i) {
+        String title = "a good field.";
+        String message = "Here you feel something good!";
+        String eventMessage = "you went to a good field!";
+        String hint = "might be a cookie!";
+        String resultMessage = "You feel better now";
+        String typeThis = "cookie"+i;
+        Function event = events.getGoodEvent();
+        return new Node(i,title,message,eventMessage,hint,resultMessage,typeThis, event);
+    }
+
 }

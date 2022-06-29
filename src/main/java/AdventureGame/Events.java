@@ -1,16 +1,20 @@
 package AdventureGame;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.function.Function;
-import java.util.*;
 
 public class Events {
 
-    private ArrayList<Function> list;
+    private ArrayList<Function> all;
+    private ArrayList<Function> bad;
+    private ArrayList<Function> good;
     private static Random rand = new Random();
 
     public Events(){
-        list = new ArrayList<>();
+        all = new ArrayList<>();
+        bad = new ArrayList<>();
+        good = new ArrayList<>();
         generateEvents();
     }
 
@@ -34,17 +38,32 @@ public class Events {
             p.killPlayer();
             return null;
         };
-        this.list.add(decreaseHP);
-        this.list.add(increaseAge);
-        this.list.add(increaseHP);
-        //this.events.add(kill);
+
+        this.all.add(decreaseHP);
+        this.all.add(increaseAge);
+        this.all.add(increaseHP);
+
+        bad.add(kill);
+        bad.add(decreaseHP);
+
+        good.add(increaseAge);
+        good.add(increaseHP);
     }
 
     public Function getRandomEvent(){
-        int r = rand.nextInt(this.list.size());
-        return this.list.get(r);
+        int r = rand.nextInt(this.all.size());
+        return this.all.get(r);
     }
 
+    public Function getBadEvent(){
+        int r = rand.nextInt(this.bad.size());
+        return this.bad.get(r);
+    }
+
+    public Function getGoodEvent(){
+        int r = rand.nextInt(this.good.size());
+        return this.good.get(r);
+    }
 
     public Function getNoEvent() {
         return (p) -> null;

@@ -1,8 +1,6 @@
 package AdventureGame;
 
 import java.util.function.Function;
-
-
 //bridge breaks after using it
 //a field that heals the player
 //a field that kills the player
@@ -72,5 +70,4 @@ public class Node {
     public String getTypeThis() {
         return this.typeThis;
     }
-
 }
